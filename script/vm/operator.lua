@@ -277,30 +277,36 @@ vm.binarySwitch = util.switch()
     : case '//'
     : case '^'
     : call(function (source)
-        local a = vm.getNumber(source[1])
-        local b = vm.getNumber(source[2])
+        local items = 5
+        local alist = vm.getNumber(source[1], items)
+        local blist = vm.getNumber(source[2], items)
         local op = source.op.type
-        local zero = b == 0
+        local zero = blist and blist[1] == 0
                 and (  op == '%'
                     or op == '/'
                     or op == '//'
                 )
-        if a and b and not zero then
-            local result = op == '+'  and a +  b
-                        or op == '-'  and a -  b
-                        or op == '*'  and a *  b
-                        or op == '/'  and a /  b
-                        or op == '%'  and a %  b
-                        or op == '//' and a // b
-                        or op == '^'  and a ^  b
-            ---@diagnostic disable-next-line: missing-fields
-            vm.setNode(source, {
-                type   = (op == '//' or math.type(result) == 'integer') and 'integer' or 'number',
-                start  = source.start,
-                finish = source.finish,
-                parent = source,
-                [1]    = result,
-            })
+        if alist and blist and not zero and (#alist * #blist <= items) then
+            local result
+            for _,a in ipairs(alist) do
+                for _,b in ipairs(blist) do
+                    result = op == '+'  and a +  b
+                          or op == '-'  and a -  b
+                          or op == '*'  and a *  b
+                          or op == '/'  and a /  b
+                          or op == '%'  and a %  b
+                          or op == '//' and a // b
+                          or op == '^'  and a ^  b
+                    ---@diagnostic disable-next-line: missing-fields
+                    vm.setNode(source, {
+                        type   = (op == '//' or math.type(result) == 'integer') and 'integer' or 'number',
+                        start  = source.start,
+                        finish = source.finish,
+                        parent = source,
+                        [1]    = result,
+                    })
+                end
+            end
         else
             local node = vm.runOperator(binaryMap[op], source[1], source[2])
             if not node then

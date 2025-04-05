@@ -167,20 +167,21 @@ function vm.getString(v)
 end
 
 ---@param v vm.object?
----@return number?
-function vm.getNumber(v)
+---@param items number?
+---@return number | number[] | nil
+function vm.getNumber(v, items)
     if not v then
         return nil
     end
+    items = items or 1
+    local result = {}
     local node = vm.compileNode(v)
-    local result
     for n in node:eachObject() do
         if n.type == 'number'
         or n.type == 'integer' then
-            if result then
+            result[#result + 1] = n[1]
+            if #result > items then
                 return nil
-            else
-                result = n[1]
             end
         elseif n.type ~= 'local'
         and    n.type ~= 'global'
@@ -188,7 +189,12 @@ function vm.getNumber(v)
             return nil
         end
     end
-    return result
+
+    if items == 1 then
+        return result[1]
+    end
+    -- returns nil if the array is empty
+    return next(result) and result
 end
 
 ---@param v vm.object
