@@ -23,6 +23,13 @@ return function (uri, callback)
             return
         end
 
+        -- in calls using ':', don't report the added 'self' as an argument
+        if source.args and #(source.args) > 0 and source.args[1].type == "self"
+        then
+            funcArgs = funcArgs - 1
+            callArgs = callArgs - 1
+        end
+
         callback {
             start  = source.start,
             finish = source.finish,
