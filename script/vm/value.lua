@@ -134,7 +134,8 @@ function vm.getInteger(v)
                 result = math.tointeger(n[1])
             end
         elseif n.type ~= 'local'
-        and    n.type ~= 'global' then
+        and    n.type ~= 'global'
+        and    n.type ~= 'variable' then
             return nil
         end
     end
@@ -157,7 +158,8 @@ function vm.getString(v)
                 result = n[1]
             end
         elseif n.type ~= 'local'
-        and    n.type ~= 'global' then
+        and    n.type ~= 'global'
+        and    n.type ~= 'variable' then
             return nil
         end
     end
@@ -181,7 +183,8 @@ function vm.getNumber(v)
                 result = n[1]
             end
         elseif n.type ~= 'local'
-        and    n.type ~= 'global' then
+        and    n.type ~= 'global'
+        and    n.type ~= 'variable' then
             return nil
         end
     end
@@ -204,7 +207,8 @@ function vm.getBoolean(v)
                 result = n[1]
             end
         elseif n.type ~= 'local'
-        and    n.type ~= 'global' then
+        and    n.type ~= 'global'
+        and    n.type ~= 'variable' then
             return nil
         end
     end
