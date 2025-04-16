@@ -13,7 +13,10 @@ local function x(a, b)
     return a, b
 end
 <!x(1)!>
+<!x()!>
 ]]
+(EXPECT_MSG('DIAG_MISS_ARGS', 2, 1))
+(EXPECT_MSG('DIAG_MISS_ARGS', 2, 0))
 
 TEST [[
 ---@param a integer

@@ -3,6 +3,7 @@ local files  = require 'files'
 local config = require 'config'
 local util   = require 'utility'
 local catch  = require 'catch'
+local lang   = require 'language'
 
 local status = config.get(nil, 'Lua.diagnostics.neededFileStatus')
 
@@ -60,7 +61,21 @@ function TEST(script)
     files.remove(TESTURI)
 
     return function (callback)
-        callback(filteds)
+        return callback(filteds)
+    end
+end
+
+function EXPECT_MSG(...)
+    local args = table.pack(select(1, ...))
+    return function (results)
+        local expected = lang.script(table.unpack(args))
+        local res = table.remove(results, 1)
+        assert(res.message == expected)
+
+        -- continue checking
+        return function (callback)
+            return callback(results)
+        end
     end
 end
 
